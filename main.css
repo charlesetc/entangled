@@ -1,0 +1,13 @@
+@font-face {
+  font-family: "iosekva normal";
+  src: url("fonts/iosevka.ttf");
+}
+
+* {
+  font-family: "iosekva normal";
+}
+
+h1 {
+  font-size: 16px;
+  padding: 10px;
+}
