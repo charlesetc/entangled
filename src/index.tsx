@@ -1,23 +1,24 @@
 import * as React from 'react';
-
 import * as ReactDOM from 'react-dom/client';
+import Vec from './vec'
 
-function Vector(x0, y0, a0, b0) {
-  const [{ x, y }, setPos] = React.useState({ x: x0, y: y0 });
-  const [{ a, b }, setVec] = React.useState({ a: a0, b: b0 });
+function Vector(pos0: Vec, vec0: Vec) {
+  const [pos, setPos] = React.useState(pos0);
+  const [vec, setVec] = React.useState(vec0);
+  const arrowSize = 20;
   return (
     <>
       <line
-        x1={x}
-        y1={y}
-        x2={x + a}
-        y2={y + b}
+        x1={pos.x}
+        y1={pos.y}
+        x2={pos.x + vec.x}
+        y2={pos.y + vec.y}
         stroke="black"
         strokeWidth="2"
       />
       <circle
-        cx={x}
-        cy={y}
+        cx={pos.x}
+        cy={pos.y}
         r="10"
         fill="white"
         stroke="black"
@@ -27,11 +28,12 @@ function Vector(x0, y0, a0, b0) {
         }}
         onMouseDown={e => {
           e.preventDefault();
+
           e.stopPropagation();
-          const mousemove = e => {
-            setPos({ x: e.clientX, y: e.clientY });
+          const mousemove = (e: MouseEvent) => {
+            setPos(new Vec(e.clientX, e.clientY));
           };
-          const mouseup = e => {
+          const mouseup = (_: MouseEvent) => {
             document.removeEventListener('mousemove', mousemove);
             document.removeEventListener('mouseup', mouseup);
           };
@@ -40,8 +42,11 @@ function Vector(x0, y0, a0, b0) {
         }}
       />
       <polygon
-        points={`${x + a},${y + b} ${x + a - 5},${y + b + 10} ${x + a - 10},${y + b + 5
-          }`}
+        points={`
+        ${pos.add(vec).comma()}
+        ${pos.add(vec).sub(vec.unit().scale(arrowSize).rotate(30)).comma()}
+        ${pos.add(vec).sub(vec.unit().scale(arrowSize).rotate(-30)).comma()}
+        `}
         style={{
           cursor: 'pointer',
         }}
@@ -51,10 +56,10 @@ function Vector(x0, y0, a0, b0) {
         onMouseDown={e => {
           e.preventDefault();
           e.stopPropagation();
-          const mousemove = e => {
-            setVec({ a: e.clientX - x, b: e.clientY - y });
+          const mousemove = (e: MouseEvent) => {
+            setVec(new Vec(e.clientX - pos.x, e.clientY - pos.y));
           };
-          const mouseup = e => {
+          const mouseup = (_: MouseEvent) => {
             document.removeEventListener('mousemove', mousemove);
             document.removeEventListener('mouseup', mouseup);
           };
@@ -77,10 +82,13 @@ function App() {
           left: 0,
           zIndex: -1,
         }}
+        onClick={() => {
+
+        }}
         width="100%"
         height="100%"
       >
-        {Vector(150, 170, 40, -40)}
+        {Vector(new Vec(150, 170), new Vec(40, -40))}
       </svg>
     </div>
   );
